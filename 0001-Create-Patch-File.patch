@@ -1,0 +1,117 @@
+From 6feacb4910c15e282e1582d7fb180531fe7d4df6 Mon Sep 17 00:00:00 2001
+From: Sanath Kumar <sanath2002kumar@gmail.com>
+Date: Tue, 18 Oct 2022 12:35:57 +0530
+Subject: [PATCH] Create Patch File
+
+---
+ src/DataManipulator.ts | 17 ++++++++---------
+ src/Graph.tsx          | 34 ++++++++++++++++++----------------
+ 2 files changed, 26 insertions(+), 25 deletions(-)
+
+diff --git a/src/DataManipulator.ts b/src/DataManipulator.ts
+index f670681..970449c 100644
+--- a/src/DataManipulator.ts
++++ b/src/DataManipulator.ts
+@@ -1,4 +1,4 @@
+-import { ServerRespond } from './DataStreamer';
++import {ServerRespond} from './DataStreamer';
+ 
+ export interface Row {
+   price_abc:number,
+@@ -12,9 +12,9 @@ export interface Row {
+ 
+ 
+ export class DataManipulator {
+-  static generateRow(serverResponds: ServerRespond[]): Row{
+-    const priceABC =(serverRespond[0].top_ask_.price +serverRespond[0].top_bid.price) / 2;
+-     const priceABC =(serverRespond[1].top_ask_.price +serverRespond[1].top_bid.price) /2 ;
++  static generateRow(serverRespond: ServerRespond[]): Row{
++    const priceABC = (serverRespond[0].top_ask.price + serverRespond[0].top_bid.price) / 2;
++    const priceDEF = (serverRespond[1].top_ask.price + serverRespond[1].top_bid.price) / 2 ;
+     const ratio = priceABC / priceDEF;
+     const upperBound = 1 + 0.05;
+     const lowerBound = 1 - 0.05;
+@@ -24,10 +24,9 @@ export class DataManipulator {
+         ratio,
+         timestamp:serverRespond[0].timestamp > serverRespond[1].timestamp ?
+         serverRespond[0].timestamp : serverRespond[1].timestamp,
+-        upper_bound : upperbound,
+-        lower_bound : lowerbound,
+-        trigger_alert : (rartio > upperBound || ratio < lowerBound) ? ratio : undefined,
++        upper_bound : upperBound,
++        lower_bound : lowerBound,
++        trigger_alert : (ratio > upperBound || ratio < lowerBound) ? ratio : undefined,
+       };
+-    })
++    }
+   }
+-}
+diff --git a/src/Graph.tsx b/src/Graph.tsx
+index be89c1d..d62d3c1 100644
+--- a/src/Graph.tsx
++++ b/src/Graph.tsx
+@@ -1,26 +1,26 @@
+-import React, { Component } from 'react';
+-import { Table } from '@finos/perspective';
+-import { ServerRespond } from './DataStreamer';
+-import { DataManipulator } from './DataManipulator';
++import React, {Component} from 'react';
++import {Table,TableData} from '@finos/perspective';
++import {ServerRespond} from './DataStreamer';
++import {DataManipulator} from './DataManipulator';
+ import './Graph.css';
+ 
+ interface IProps {
+-  data: ServerRespond[],
++data: ServerRespond[],
+ }
+ 
+ interface PerspectiveViewerElement extends HTMLElement {
+-  load: (table: Table) => void,
++load: (table: Table) => void,
+ }
+ class Graph extends Component<IProps, {}> {
+-  table: Table | undefined;
++table: Table | undefined;
+ 
+-  render() {
+-    return React.createElement('perspective-viewer');
+-  }
++render() {
++return React.createElement('perspective-viewer');
++}
+ 
+-  componentDidMount() {
+-    // Get element from the DOM.
+-    const elem = document.getElementsByTagName('perspective-viewer')[0] as unknown as PerspectiveViewerElement;
++componentDidMount() {
++  // Get element from the DOM.
++  const elem = document.getElementsByTagName('perspective-viewer')[0] as unknown as PerspectiveViewerElement;
+ 
+     const schema = {
+       price_abc:'float',
+@@ -29,6 +29,7 @@ class Graph extends Component<IProps, {}> {
+       timestamp:'date',
+       upper_bound:'float',
+       lower_bound:'float',
++      trigger_alert: 'float'
+     };
+ 
+     if (window.perspective && window.perspective.worker()) {
+@@ -54,9 +55,10 @@ class Graph extends Component<IProps, {}> {
+ 
+   componentDidUpdate() {
+     if (this.table) {
+-      this.table.update(
+-        DataManipulator.generateRow(this.props.data),
+-      );
++      this.table.update([
++          DataManipulator.generateRow(this.props.data),
++      ] as unknown as TableData);
++    });
+     }
+   }
+ }
+-- 
+2.38.0.windows.1
+
