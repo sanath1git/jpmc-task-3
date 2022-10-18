@@ -1,26 +1,26 @@
-import React, { Component } from 'react';
-import { Table } from '@finos/perspective';
-import { ServerRespond } from './DataStreamer';
-import { DataManipulator } from './DataManipulator';
+import React, {Component} from 'react';
+import {Table,TableData} from '@finos/perspective';
+import {ServerRespond} from './DataStreamer';
+import {DataManipulator} from './DataManipulator';
 import './Graph.css';
 
 interface IProps {
-  data: ServerRespond[],
+data: ServerRespond[],
 }
 
 interface PerspectiveViewerElement extends HTMLElement {
-  load: (table: Table) => void,
+load: (table: Table) => void,
 }
 class Graph extends Component<IProps, {}> {
-  table: Table | undefined;
+table: Table | undefined;
 
-  render() {
-    return React.createElement('perspective-viewer');
-  }
+render() {
+return React.createElement('perspective-viewer');
+}
 
-  componentDidMount() {
-    // Get element from the DOM.
-    const elem = document.getElementsByTagName('perspective-viewer')[0] as unknown as PerspectiveViewerElement;
+componentDidMount() {
+  // Get element from the DOM.
+  const elem = document.getElementsByTagName('perspective-viewer')[0] as unknown as PerspectiveViewerElement;
 
     const schema = {
       price_abc:'float',
@@ -29,6 +29,7 @@ class Graph extends Component<IProps, {}> {
       timestamp:'date',
       upper_bound:'float',
       lower_bound:'float',
+      trigger_alert: 'float'
     };
 
     if (window.perspective && window.perspective.worker()) {
